@@ -10,9 +10,9 @@ class AddKeyPage(BasePage):
     ADD_KEY_BTN = (AppiumBy.ACCESSIBILITY_ID, "Add Key")
 
     def fill_key_form(self, website, account, key):
-        self.wait_for_presence(self.WEBSITE_INPUT).send_keys(website)
-        self.wait_for_presence(self.ACCOUNT_INPUT).send_keys(account)
-        self.wait_for_presence(self.KEY_INPUT).send_keys(key)
+        self.send_keys_human(self.WEBSITE_INPUT, website)
+        self.send_keys_human(self.ACCOUNT_INPUT, account)
+        self.send_keys_human(self.KEY_INPUT, key)
 
     def submit(self):
         self.wait_and_click(self.ADD_KEY_BTN)

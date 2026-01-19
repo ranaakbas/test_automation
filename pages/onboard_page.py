@@ -11,11 +11,11 @@ class OnboardPage(BasePage):
     GET_STARTED_BTN = (By.XPATH, "//*[contains(@text,'Get Started')]")
 
     def complete_onboarding(self):
-        self.wait_for_presence(self.MAX_PRIVACY_TEXT)
+        self.wait_for_visible(self.MAX_PRIVACY_TEXT)
         self.wait_and_click(self.CONTINUE_BTN)
 
-        self.wait_for_presence(self.EASY_SETUP_TEXT)
+        self.wait_for_visible(self.EASY_SETUP_TEXT)
         self.wait_and_click(self.CONTINUE_BTN)
 
-        self.wait_for_presence(self.SECURE_ACCOUNTS_TEXT)
+        self.wait_for_visible(self.SECURE_ACCOUNTS_TEXT)
         self.wait_and_click(self.GET_STARTED_BTN)

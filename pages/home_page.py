@@ -6,4 +6,5 @@ class HomePage(BasePage):
     ENTER_MANUALLY_BTN = (AppiumBy.ACCESSIBILITY_ID, "Enter Manually")
 
     def go_to_add_key(self):
+        self.wait_for_visible(self.ENTER_MANUALLY_BTN)
         self.wait_and_click(self.ENTER_MANUALLY_BTN)

@@ -35,7 +35,7 @@ try:
 
     premium.skip_if_visible()
 
-    print("✅ SUCCESS – Premium paywall tekrar çıktı.")
+    print("✅ SUCCESS")
 
 finally:
     driver.quit()
