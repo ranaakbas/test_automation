@@ -1,20 +1,16 @@
-from appium import webdriver
-from appium.options.android import UiAutomator2Options
+import sys
+from pathlib import Path
 
+# Proje kök dizinini Python path'e ekle
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from config import get_driver
 from pages.onboard_page import OnboardPage
 from pages.premium_page import PremiumPage
 from pages.home_page import HomePage
 from pages.add_key_page import AddKeyPage
 
-options = UiAutomator2Options()
-options.platform_name = "Android"
-options.device_name = "emulator-5554"
-options.automation_name = "UiAutomator2"
-options.app = "/Users/ranaakbas/mobiva/apks/app-release.apk"
-options.no_reset = False
-options.full_reset = False
-
-driver = webdriver.Remote(command_executor="http://127.0.0.1:4723", options=options)
+driver = get_driver(test_name="AddKey Flow Test")
 
 try:
     onboard = OnboardPage(driver)

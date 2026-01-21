@@ -1,5 +1,8 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 class PremiumPage(BasePage):
@@ -7,6 +10,12 @@ class PremiumPage(BasePage):
     SKIP_BTN = (By.XPATH, "//*[contains(@text,'Skip for now')]")
 
     def skip_if_visible(self):
-        self.wait_for_visible(self.MAX_SECURITY_TEXT)
-        skip_btn = self.find_element_with_swipe(self.SKIP_BTN)
-        skip_btn.click()
+        try:
+            WebDriverWait(self.driver, 3).until(
+                EC.visibility_of_element_located(self.MAX_SECURITY_TEXT)
+            )
+        except TimeoutException:
+            print("ℹ️ Premium yok")
+            return
+
+        self.swipe_until_visible_and_click(self.SKIP_BTN)

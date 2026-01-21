@@ -3,6 +3,12 @@ import random
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.actions.action_builder import ActionBuilder
+from selenium.webdriver.common.actions.pointer_input import PointerInput
+from selenium.webdriver.common.actions import interaction
+from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import TimeoutException
 
 
 class BasePage:
@@ -32,6 +38,13 @@ class BasePage:
         self.wait.until(EC.element_to_be_clickable(locator)).click()
         self._pause(0.4, 0.8)
 
+    def hide_keyboard_if_open(self):
+        try:
+            self.driver.hide_keyboard()
+            print("⌨️ Keyboard kapatıldı")
+        except WebDriverException:
+            print("ℹ️ Keyboard zaten kapalı / kapatılamadı")
+
     # ---------------- INPUT ----------------
     def send_keys_human(self, locator, text):
         el = self.wait_for_visible(locator)
@@ -51,19 +64,20 @@ class BasePage:
         size = self.driver.get_window_size()
         start_x = size["width"] // 2
         start_y = int(size["height"] * 0.65)
-        end_y = int(size["height"] * 0.25)
+        end_y = int(size["height"] * 0.15)
 
-        self.driver.execute_script(
-            "mobile: swipeGesture",
-            {
-                "left": start_x,
-                "top": end_y,
-                "width": 1,
-                "height": start_y - end_y,
-                "direction": "up",
-                "percent": 1.0,
-            },
-        )
+        # W3C Actions kullanarak swipe (BrowserStack ve lokal Appium için uyumlu)
+        finger = PointerInput(interaction.POINTER_TOUCH, "finger")
+        actions = ActionBuilder(self.driver, mouse=finger)
+
+        actions.pointer_action.move_to_location(start_x, start_y)
+        actions.pointer_action.pointer_down()
+        actions.pointer_action.pause(0.1)
+        actions.pointer_action.move_to_location(start_x, end_y)
+        actions.pointer_action.pause(0.1)
+        actions.pointer_action.pointer_up()
+
+        actions.perform()
 
         self._pause(0.6, 1.0)
 
@@ -78,3 +92,26 @@ class BasePage:
                 self.swipe_up_from_middle()
 
         raise Exception("❌ Element bulunamadı (swipe sonrası)")
+
+    def swipe_until_visible_and_click(self, locator, max_swipe=5):
+        """
+        Element görünene kadar aynı koordinatlarla swipe eder,
+        görünür olduğu anda click eder.
+        """
+        for i in range(1, max_swipe + 1):
+            try:
+                print(f"🔍 Skip aranıyor (deneme {i})")
+                el = WebDriverWait(self.driver, 2).until(
+                    EC.visibility_of_element_located(locator)
+                )
+                print(f"✅ Element göründü (swipe #{i})")
+                el.click()
+                self._pause(0.4, 0.7)
+                return True
+
+            except TimeoutException:
+                print(f"🔄 Swipe #{i}")
+                self.swipe_up_from_middle()
+
+        print("ℹ️ Skip for now bulunamadı")
+        return False

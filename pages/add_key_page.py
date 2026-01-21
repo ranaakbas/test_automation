@@ -15,4 +15,5 @@ class AddKeyPage(BasePage):
         self.send_keys_human(self.KEY_INPUT, key)
 
     def submit(self):
+        self.hide_keyboard_if_open()
         self.wait_and_click(self.ADD_KEY_BTN)
