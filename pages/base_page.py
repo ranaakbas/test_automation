@@ -33,6 +33,20 @@ class BasePage:
         self._pause()
         return el
 
+    def is_element_visible(self, locator, timeout=3):
+        """
+        Verilen locator'ın kısa bir süre içinde görünür olup olmadığını bool olarak döner.
+        Exception fırlatmak yerine True/False vermesi, akış kararları için kullanışlıdır.
+        """
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located(locator)
+            )
+            self._pause()
+            return True
+        except TimeoutException:
+            return False
+
     def wait_and_click(self, locator):
         self._pause(0.2, 0.5)
         self.wait.until(EC.element_to_be_clickable(locator)).click()
@@ -44,6 +58,12 @@ class BasePage:
             print("⌨️ Keyboard kapatıldı")
         except WebDriverException:
             print("ℹ️ Keyboard zaten kapalı / kapatılamadı")
+
+    def press_back_button(self):
+        """Telefonun geri tuşuna bas"""
+        self.driver.back()
+        self._pause(0.5, 1.0)
+        print("🔙 Telefon geri tuşuna basıldı")
 
     # ---------------- INPUT ----------------
     def send_keys_human(self, locator, text):
@@ -93,25 +113,90 @@ class BasePage:
 
         raise Exception("❌ Element bulunamadı (swipe sonrası)")
 
-    def swipe_until_visible_and_click(self, locator, max_swipe=5):
+    def _is_element_in_viewport(self, element):
         """
-        Element görünene kadar aynı koordinatlarla swipe eder,
-        görünür olduğu anda click eder.
+        Elementin gerçekten ekranda görünür alanda olup olmadığını kontrol eder.
         """
-        for i in range(1, max_swipe + 1):
-            try:
-                print(f"🔍 Skip aranıyor (deneme {i})")
-                el = WebDriverWait(self.driver, 2).until(
-                    EC.visibility_of_element_located(locator)
-                )
-                print(f"✅ Element göründü (swipe #{i})")
-                el.click()
-                self._pause(0.4, 0.7)
-                return True
+        try:
+            location = element.location
+            size = element.size
+            window_size = self.driver.get_window_size()
 
+            el_top = location["y"]
+            el_bottom = location["y"] + size["height"]
+            el_left = location["x"]
+            el_right = location["x"] + size["width"]
+
+            # Element ekran sınırları içinde mi?
+            # Üstten ve alttan biraz margin bırak (header/footer için)
+            margin_top = 100
+            margin_bottom = 150
+
+            in_viewport = (
+                el_top >= margin_top
+                and el_bottom <= (window_size["height"] - margin_bottom)
+                and el_left >= 0
+                and el_right <= window_size["width"]
+            )
+
+            print(
+                f"📍 Element pozisyon: y={el_top}-{el_bottom}, "
+                f"ekran: 0-{window_size['height']}, viewport'ta: {in_viewport}"
+            )
+            return in_viewport
+        except Exception as e:
+            print(f"⚠️ Viewport kontrolü başarısız: {e}")
+            return False
+
+    def swipe_until_visible_and_click(self, locator, max_swipe=10, min_swipe=0):
+        element_found = False
+        found_at_swipe = 0
+
+        for i in range(1, max_swipe + 1):
+            print(f"🔍 Element aranıyor (deneme {i})")
+
+            try:
+                el = self.driver.find_element(*locator)
+            except NoSuchElementException:
+                print(f"🔄 Element DOM'da yok, swipe #{i}")
+                self.swipe_up_from_middle()
+                continue
+
+            # Element DOM'da var, ama ekranda görünür alanda mı?
+            if not self._is_element_in_viewport(el):
+                print(f"🔄 Element ekran dışında, swipe #{i}")
+                self.swipe_up_from_middle()
+                continue
+
+            # Element görünür alanda bulundu
+            element_found = True
+            found_at_swipe = i
+
+            # En az min_swipe kadar swipe yapılmadıysa devam et
+            if i < min_swipe:
+                print(
+                    f"🔄 Element bulundu ama en az {min_swipe} swipe yapılmalı (şu an: {i}), swipe devam ediyor"
+                )
+                self.swipe_up_from_middle()
+                continue
+
+            # Element görünür alanda ve min_swipe tamamlandı, tıklamayı dene
+            self._pause(0.3, 0.5)
+            try:
+                el = WebDriverWait(self.driver, 3).until(
+                    EC.element_to_be_clickable(locator)
+                )
+                print(f"✅ Element tıklanabilir durumda")
+                el.click()
+                self._pause(0.5, 0.8)
+                print(f"✅ Element tıklandı")
+                return True
             except TimeoutException:
-                print(f"🔄 Swipe #{i}")
+                print(f"⚠️ Element tıklanamadı, swipe devam ediyor")
                 self.swipe_up_from_middle()
 
-        print("ℹ️ Skip for now bulunamadı")
+        if element_found:
+            print(f"❌ Element bulundu (swipe #{found_at_swipe}) ama tıklanamadı")
+        else:
+            print("❌ Element bulunamadı")
         return False

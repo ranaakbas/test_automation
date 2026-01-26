@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 from pages.base_page import BasePage
 
 
@@ -17,5 +18,14 @@ class OnboardPage(BasePage):
         self.wait_for_visible(self.EASY_SETUP_TEXT)
         self.wait_and_click(self.CONTINUE_BTN)
 
-        self.wait_for_visible(self.SECURE_ACCOUNTS_TEXT)
-        self.wait_and_click(self.GET_STARTED_BTN)
+        # Son sayfada GET_STARTED_BTN'ı bul ve tıkla
+        # Önce normal bekleme dene, başarısız olursa swipe ile ara
+        try:
+            self.wait_for_visible(self.SECURE_ACCOUNTS_TEXT)
+            self.wait_and_click(self.GET_STARTED_BTN)
+        except TimeoutException:
+            # Text bulunamazsa direkt butonu swipe ile ara
+            print(
+                "⚠️ SECURE_ACCOUNTS_TEXT bulunamadı, GET_STARTED_BTN swipe ile aranıyor..."
+            )
+            self.swipe_until_visible_and_click(self.GET_STARTED_BTN)

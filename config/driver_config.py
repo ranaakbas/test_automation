@@ -28,8 +28,8 @@ def get_driver(local=None, test_name="Test"):
     options.set_capability("deviceName", "Samsung Galaxy S22")
     options.set_capability("os_version", "12.0")
 
-    options.set_capability("project", "AddKey Automation")
-    options.set_capability("build", "Android AddKey v1")
+    options.set_capability("project", "Authenticator Complete Flow")
+    options.set_capability("build", "Android Complete Flow")
     options.set_capability("name", test_name)
 
     options.set_capability("automationName", "UiAutomator2")

@@ -8,6 +8,7 @@ class AddKeyPage(BasePage):
     ACCOUNT_INPUT = (By.XPATH, "//android.widget.EditText[@text='user@example.com']")
     KEY_INPUT = (By.XPATH, "//android.widget.EditText[@text='_ _ _  _ _ _  _ _ _']")
     ADD_KEY_BTN = (AppiumBy.ACCESSIBILITY_ID, "Add Key")
+    BACK_BTN = (AppiumBy.ACCESSIBILITY_ID, "Back")
 
     def fill_key_form(self, website, account, key):
         self.send_keys_human(self.WEBSITE_INPUT, website)
@@ -17,3 +18,7 @@ class AddKeyPage(BasePage):
     def submit(self):
         self.hide_keyboard_if_open()
         self.wait_and_click(self.ADD_KEY_BTN)
+
+    def click_back(self):
+        """Add Key sayfasından geri dön"""
+        self.wait_and_click(self.BACK_BTN)
