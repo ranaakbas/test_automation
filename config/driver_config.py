@@ -5,8 +5,7 @@ from appium.options.android import UiAutomator2Options
 from dotenv import load_dotenv
 
 # .env dosyasını proje kök dizininden yükle
-env_path = Path(__file__).parent.parent / ".env"
-load_dotenv(env_path)
+load_dotenv()
 
 
 def get_driver(local=None, test_name="Test"):
@@ -38,5 +37,5 @@ def get_driver(local=None, test_name="Test"):
     bs_key = os.getenv("BROWSERSTACK_ACCESS_KEY")
 
     return webdriver.Remote(
-        f"https://{bs_user}:{bs_key}@hub.browserstack.com/wd/hub", options=options
+        f"https://{bs_user}:{bs_key}@hub-cloud.browserstack.com/wd/hub", options=options
     )

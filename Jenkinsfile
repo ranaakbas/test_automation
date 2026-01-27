@@ -1,13 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        BROWSERSTACK_USERNAME = credentials('browserstack-username')
+        BROWSERSTACK_ACCESS_KEY = credentials('browserstack-access-key')
+        USE_LOCAL = credentials('use-local')
+        BS_APP_URL = credentials('bs-app-url')
+    }
+    
     stages {
-
-        stage('Checkout') {
-            steps {
-                echo '📦 Repo çekildi'
-            }
-        }
 
         stage('Setup Python Env') {
             steps {

@@ -7,4 +7,3 @@ node_modules/
 *.log
 *.mp4
 *.mov
-.env
