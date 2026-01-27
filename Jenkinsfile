@@ -5,15 +5,26 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Repo başarıyla çekildi'
+                echo '📦 Repo çekildi'
             }
         }
 
-        stage('Environment Check') {
+        stage('Setup Python Env') {
             steps {
                 sh '''
-                    python3 --version
-                    pip3 --version
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Pytest') {
+            steps {
+                sh '''
+                    source venv/bin/activate
+                    pytest
                 '''
             }
         }
