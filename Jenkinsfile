@@ -36,34 +36,16 @@ pipeline {
         success {
             emailext(
                 to: 'rana.akbas@mobiva.co',
-                subject: "✅ SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-🎉 SUCCESS
-
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Status: ${currentBuild.currentResult}
-
-Build URL:
-${env.BUILD_URL}
-"""
+                subject: "SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Build sonucu: ${currentBuild.currentResult}\n${env.BUILD_URL}"
             )
         }
 
         failure {
             emailext(
-                to: 'rana.@example.co',
-                subject: "❌ FAIL - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-🚨 FAIL
-
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Status: ${currentBuild.currentResult}
-
-Console Output:
-${env.BUILD_URL}console
-"""
+                to: 'rana.akbas@mobiva.co',
+                subject: "FAIL - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Build sonucu: ${currentBuild.currentResult}\n${env.BUILD_URL}"
             )
         }
 
