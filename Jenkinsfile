@@ -4,7 +4,7 @@ pipeline {
     environment {
         BROWSERSTACK_USERNAME = credentials('browserstack-username')
         BROWSERSTACK_ACCESS_KEY = credentials('browserstack-access-key')
-        USE_LOCAL = credentials('use-local')
+        USE_LOCAL = 'false'
         BS_APP_URL = credentials('bs-app-url')
     }
     
@@ -28,6 +28,47 @@ pipeline {
                     pytest
                 '''
             }
+        }
+    }
+
+    post {
+
+        success {
+            emailext(
+                to: 'rana.akbas@mobiva.co',
+                subject: "✅ SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+🎉 SUCCESS
+
+Job: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+Status: ${currentBuild.currentResult}
+
+Build URL:
+${env.BUILD_URL}
+"""
+            )
+        }
+
+        failure {
+            emailext(
+                to: 'rana.@example.co',
+                subject: "❌ FAIL - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+🚨 FAIL
+
+Job: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+Status: ${currentBuild.currentResult}
+
+Console Output:
+${env.BUILD_URL}console
+"""
+            )
+        }
+
+        always {
+            echo "Pipeline finished with status: ${currentBuild.currentResult}"
         }
     }
 }
