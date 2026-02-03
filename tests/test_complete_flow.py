@@ -8,12 +8,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from selenium.common.exceptions import TimeoutException
 
 from config import get_driver
-from pages.onboard_page import OnboardPage
-from pages.premium_page import PremiumPage
-from pages.home_page import HomePage
-from pages.add_key_page import AddKeyPage
-from pages.legal_page import LegalPage
-from pages.camera_page import CameraPage
+from pages.android.onboard_page import OnboardPage
+from pages.android.premium_page import PremiumPage
+from pages.android.home_page import HomePage
+from pages.android.add_key_page import AddKeyPage
+from pages.android.legal_page import LegalPage
+from pages.android.camera_page import CameraPage
 
 
 def test_complete_flow():

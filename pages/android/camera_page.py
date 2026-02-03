@@ -10,6 +10,7 @@ from pages.base_page import BasePage
 class CameraPage(BasePage):
     """
     Scan QR Code (kamera) ekranı + izin popup'ları + Photo Gallery akışı.
+    Android platformu için.
     """
 
     # Kamera ekranındaki aksiyonlar

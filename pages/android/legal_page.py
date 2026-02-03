@@ -3,7 +3,7 @@ from pages.base_page import BasePage
 
 
 class LegalPage(BasePage):
-    """Terms, Privacy Policy ve EULA sayfaları için ortak page class"""
+    """Terms, Privacy Policy ve EULA sayfaları için ortak page class. Android platformu."""
 
     TERMS_AND_CONDITIONS_TEXT = (By.XPATH, "//*[@text='Terms and Conditions']")
     PRIVACY_POLICY_TEXT = (By.XPATH, "//*[@text='Privacy Policy']")
