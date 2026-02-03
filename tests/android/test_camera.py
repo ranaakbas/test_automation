@@ -21,3 +21,5 @@ def test_camera_qr_flow(app):
 
     premium.skip_if_visible()
     camera.back_to_home()
+
+    home.verify_enter_manually_visible()
