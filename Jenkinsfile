@@ -21,54 +21,73 @@ pipeline {
             }
         }
 
-        stage('Run Pytest') {
+         stage('Run Android Tests') {
             steps {
                 sh '''
-                    source venv/bin/activate
-                    pytest
+                    . venv/bin/activate
+                    pytest tests/android \
+                        --junitxml=reports/junit.xml \
+                        -v -ra
                 '''
             }
         }
     }
 
     post {
+    always {
+        junit 'reports/junit.xml'
+    }
 
-        success {
-            emailext(
-                to: 'rana.akbas@mobiva.co',
-                subject: "✅ SUCCESS - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-🎉 SUCCESS
+    success {
+        emailext(
+            to: 'rana.akbas@mobiva.co',
+            subject: "✅ Android Automation PASSED - Build #${BUILD_NUMBER}",
+            body: """
+📊 Android Automation Test Report
 
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Status: ${currentBuild.currentResult}
+Job: ${JOB_NAME}
+Build: #${BUILD_NUMBER}
+
+-------------------------
+Test Summary
+-------------------------
+Total Tests: ${TEST_COUNTS.total}
+Passed: ${TEST_COUNTS.pass}
+Failed: ${TEST_COUNTS.fail}
+Skipped: ${TEST_COUNTS.skip}
 
 Build URL:
-${env.BUILD_URL}
+${BUILD_URL}
 """
-            )
-        }
+        )
+    }
 
-        failure {
-            emailext(
-                to: 'rana.akbas@mobiva.co',
-                subject: "❌ FAIL - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-🚨 FAIL
+    failure {
+        emailext(
+            to: 'rana.akbas@mobiva.co',
+            subject: "❌ Android Automation FAILED - Build #${BUILD_NUMBER}",
+            body: """
+📊 Android Automation Test Report
 
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Status: ${currentBuild.currentResult}
+Job: ${JOB_NAME}
+Build: #${BUILD_NUMBER}
 
-Console Output:
-${env.BUILD_URL}console
+-------------------------
+Test Summary
+-------------------------
+Total Tests: ${TEST_COUNTS.total}
+Passed: ${TEST_COUNTS.pass}
+Failed: ${TEST_COUNTS.fail}
+Skipped: ${TEST_COUNTS.skip}
+
+-------------------------
+❌ Failed Tests
+-------------------------
+${FAILED_TESTS}
+
+Build URL:
+${BUILD_URL}
 """
-            )
-        }
-
-        always {
-            echo "Pipeline finished with status: ${currentBuild.currentResult}"
-        }
+        )
     }
 }
