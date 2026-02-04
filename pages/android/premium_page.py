@@ -30,6 +30,17 @@ class PremiumPage(BasePage):
             EC.visibility_of_element_located(self.CONTACT_US_BTN)
         )
 
+    def verify_premium_upsell_visible(self, timeout_s=10):
+        """
+        Premium upsell ekranının (Maximum Security metni) gerçekten geldiğini
+        doğrular. Bu sayede Jenkins tarafında da bu ekranın açılmaması durumunda
+        testler açıkça FAIL olur.
+        """
+        WebDriverWait(self.driver, timeout_s).until(
+            EC.visibility_of_element_located(self.MAX_SECURITY_TEXT)
+        )
+        print("✅ Premium upsell ekranı görünür")
+
     def skip_if_visible(self):
         try:
             WebDriverWait(self.driver, 5).until(

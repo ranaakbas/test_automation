@@ -11,6 +11,7 @@ def test_premium_legal_links(app):
     premium = PremiumPage(app)
     legal = LegalPage(app)
 
+    home.verify_top_right_button_visible()
     home.click_top_right_button()
 
     premium.click_premium_banner()

@@ -17,6 +17,14 @@ class HomePage(BasePage):
         self.wait_for_visible(self.ENTER_MANUALLY_BTN)
         self.wait_and_click(self.ENTER_MANUALLY_BTN)
 
+    def verify_top_right_button_visible(self, timeout_s=10):
+        """
+        Sağ üstteki butonun gerçekten görünür olduğunu doğrular.
+        Görünmezse TimeoutException ile testi FAIL eder.
+        """
+        self.wait_for_visible(self.TOP_RIGHT_BUTTON, timeout=timeout_s)
+        print("✅ Sağ üstteki buton (TOP_RIGHT_BUTTON) görünür")
+
     def click_top_right_button(self):
         """Sağ üstteki butona tıkla"""
         self.wait_and_click(self.TOP_RIGHT_BUTTON)

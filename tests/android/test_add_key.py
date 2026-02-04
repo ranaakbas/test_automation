@@ -14,6 +14,7 @@ def test_add_key_success(app):
     )
     add_key.submit()
 
+    premium.verify_premium_upsell_visible()
     premium.skip_if_visible()
     add_key.click_back()
 
