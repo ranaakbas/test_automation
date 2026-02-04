@@ -10,14 +10,13 @@ class HomePage(BasePage):
     PREMIUM_PAGE_BTN = (By.XPATH, "//com.horcrux.svg.RectView")
     TOP_RIGHT_BUTTON = (
         By.XPATH,
-        "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/com.horcrux.svg.SvgView/com.horcrux.svg.GroupView/com.horcrux.svg.PathView",
+        "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/com.horcrux.svg.SvgView",
     )
 
     def go_to_add_key(self):
         self.wait_for_visible(self.ENTER_MANUALLY_BTN)
         self.wait_and_click(self.ENTER_MANUALLY_BTN)
 
-    def verify_top_right_button_visible(self, timeout_s=10):
         """
         Sağ üstteki butonun gerçekten görünür olduğunu doğrular.
         Görünmezse TimeoutException ile testi FAIL eder.
@@ -26,7 +25,6 @@ class HomePage(BasePage):
         print("✅ Sağ üstteki buton (TOP_RIGHT_BUTTON) görünür")
 
     def click_top_right_button(self):
-        """Sağ üstteki butona tıkla"""
         self.wait_and_click(self.TOP_RIGHT_BUTTON)
 
     def verify_enter_manually_visible(self):
