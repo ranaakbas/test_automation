@@ -7,9 +7,9 @@ from pages.android.home_page import HomePage
 
 
 def test_premium_legal_links(app):
+    home = HomePage(app)
     premium = PremiumPage(app)
     legal = LegalPage(app)
-    home = HomePage(app)
 
     home.click_top_right_button()
 

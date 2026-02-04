@@ -50,9 +50,24 @@ class PremiumPage(BasePage):
             print("⚠️ Skip butonu tıklanamadı")
 
     def click_premium_banner(self):
-        """Premium banner'a tıkla"""
-        self.wait_and_click(self.PREMIUM_BANNER)
-        print("✅ Premium banner'a tıklandı")
+        """
+        Premium banner'a tıkla.
+
+        Jenkins / farklı ekran boyutlarında banner bazen ilk ekranda olmayıp
+        aşağıda kalabiliyor. Bu nedenle, Skip butonunda yaptığımız gibi
+        swipe ile arayıp tıklamayı deniyoruz.
+        """
+        result = self.swipe_until_visible_and_click(
+            self.PREMIUM_BANNER,
+            max_swipe=10,
+            min_swipe=0,
+        )
+
+        if result:
+            print("✅ Premium banner'a tıklandı")
+        else:
+            print("❌ Premium banner bulunamadı veya tıklanamadı")
+            raise TimeoutException("Premium banner bulunamadı veya tıklanamadı")
 
     def click_terms_of_service(self):
         """Terms of Service butonuna tıkla"""

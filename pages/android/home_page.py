@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
+from selenium.common.exceptions import TimeoutException
 from pages.base_page import BasePage
 
 
@@ -21,9 +22,30 @@ class HomePage(BasePage):
         self.wait_and_click(self.TOP_RIGHT_BUTTON)
 
     def verify_enter_manually_visible(self):
-        """Enter Manually butonunun görünür olduğunu doğrula"""
+        """
+        Enter Manually butonunun görünür olduğunu doğrula.
+
+        Jenkins / uzak cihazlarda bazen akış ara bir ekranda (ör. Settings/Add Key)
+        kalabiliyor. Bu durumda önce normal şekilde bekleriz; başarısız olursa
+        tek seferlik telefon geri tuşuna basıp tekrar deneriz.
+        """
+        try:
+            self.wait_for_visible(self.ENTER_MANUALLY_BTN)
+            print("✅ Enter Manually butonu görünür")
+            return
+        except TimeoutException:
+            print(
+                "ℹ️ Enter Manually butonu ilk denemede görünmedi, "
+                "geri tuşu ile homepage'e dönmeyi deniyoruz"
+            )
+
+        # Ara ekrandan (ör. Add Key / Settings) tek seferlik geri dönmeyi dene
+        self.press_back_button()
+
+        # Geri sonrası tekrar dene; hala bulunamazsa orijinal TimeoutException'ı
+        # yükseltmeye gerek yok, zaten bu bekleme de TimeoutException fırlatacak.
         self.wait_for_visible(self.ENTER_MANUALLY_BTN)
-        print("✅ Enter Manually butonu görünür")
+        print("✅ Enter Manually butonu geri sonrası görünür")
 
     def is_home_visible(self, timeout=3):
         """
